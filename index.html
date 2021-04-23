@@ -32,7 +32,7 @@
         .back {
             width: 100%;
             height: 100%;
-            background: url(cards/spade.jpg) no-repeat;
+            background: url(cards/Red_back.jpg) no-repeat;
             background-size: contain;
             position: absolute;
             transform: rotateY(180deg);
@@ -50,12 +50,16 @@
 
     </div>
 
+    <div id="goal"></div>
     <script src="./jquery-3.6.0.min.js"></script>
     <script>
         const startBtn = document.querySelector(`button`);
         const cards = document.querySelectorAll(`.card`);
         const front = document.querySelectorAll(`.front`);
         const back = document.querySelectorAll(`.back`);
+        const goal = document.querySelector(`#goal`);
+        const img = document.createElement(`img`);
+
         startBtn.addEventListener(`click`, start);
 
         function start() {
@@ -69,11 +73,34 @@
             }
 
 
+            let arr = [];
+            for (let i = 0; i < 4; i++) {
+                let target = (Math.floor(Math.random() * 4)) + 1;
+                console.log('長度是:' + arr.length);
+                console.log('元素是:' + arr[i]);
+
+                arr.push(target);
+
+                console.log(arr);
+                // } else {
+                //     for (let j = 0; j < arr.length; j++) {
+                //         if (arr[j] === target) {
+                //             i -= 1;
+                //         } else {
+                //             arr.push(target);
+                //         }
+                //     }
+                // }
+
+                // goal.append(img);
+                // img.src = `./cards/color${arr[i]}.jpg`;
+            }
+
             for (let i = 0; i < 16; i++) {
                 let number = i % 4 + 1
                 $(`.card`).eq(i).find(`.back`).css(`background-image`, `url(./cards/color${number}.jpg)`);
                 $(`.card`).eq(i).attr(`data-card`, number)
-
+                console.log(number);
                 let target = Math.floor(Math.random() * 16)
                 $(`.card`).eq(target).insertAfter($(`.card`).eq(i))
                 setTimeout(() => {
