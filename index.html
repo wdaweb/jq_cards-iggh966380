@@ -63,6 +63,10 @@
 
         startBtn.addEventListener(`click`, start);
 
+        function rand(para) {
+            return Math.floor(Math.random() * para)
+        }
+
         function start() {
             for (let i = 0; i < 16; i++) {
                 $(`#game`).append(`
@@ -76,7 +80,7 @@
 
             let arr = [];
             for (let i = 0; i < 4; i++) {
-                let target = (Math.floor(Math.random() * 4)) + 1;
+                let target = rand(4) + 1;
                 if (arr.length === 0) {
                     arr.push(target);
                 } else if (arr.length === 1) {
@@ -105,23 +109,38 @@
 
 
 
+
             for (let i = 0; i < 16; i++) {
                 let number = i % 4 + 1
                 $(`.card`).eq(i).find(`.back`).css(`background-image`, `url(./cards/color${number}.jpg)`);
                 $(`.card`).eq(i).attr(`data-card`, number);
 
-                let target = Math.floor(Math.random() * 16)
+                let target = rand(16);
                 $(`.card`).eq(target).insertAfter($(`.card`).eq(i))
-
-                setTimeout(() => {
-                    $(`.card`).addClass(`open`);
-                }, 1000)
-
-                setTimeout(() => {
-                    $(`.card`).removeClass(`open`);
-                    startBtn.disabled = true;
-                }, 3000)
+                $(`.card`).eq(target).addClass(`animate_animated`)
             }
+
+            let cardArr = [];
+            for (let i = 0; i < 16; i++) {
+                if (parseInt($(`.card`).eq(i).attr(`data-card`)) === arr[0]) {
+                    cardArr.push(i);
+                }
+                console.log(cardArr);
+            }
+
+            console.log(cardArr[rand(4)]);
+
+            setTimeout(() => {
+                $(`.card`).addClass(`open`);
+            }, 1000)
+
+            setTimeout(() => {
+                $(`.card`).removeClass(`open`);
+                startBtn.disabled = true;
+                $(`.card`).eq(cardArr[rand(4)]).addClass(`animate_fadeOutUp`)
+            }, 3000)
+
+
 
             let pass = false;
 
@@ -129,6 +148,8 @@
                 if ($(`.open`).length <= 4 && !$(this).hasClass(`open`)) {
                     $(this).addClass(`open`)
                 }
+
+
 
                 if ($(`.open`).length === 4) {
                     if ($(`.open`).eq(0).attr(`data-card`) === $(`.open`).eq(1).attr(`data-card`)) {
@@ -141,20 +162,16 @@
                             }
                         }
                     }
+                }
 
-                    if (pass === true) {
-                        i++;
-                        img.src = `./cards/color${arr[i]}.jpg`;
-
-                        $(`.card`).addClass(`open`);
-                        setTimeout(() => {
-                            pass = false;
-                        }, 4000)
-                    }
-
+                if (pass === true) {
+                    i++;
+                    img.src = `./cards/color${arr[i]}.jpg`;
+                    $(`.card`).addClass(`open`);
                     setTimeout(() => {
-                        $(`.open`).removeClass(`open`)
-                    }, 1000)
+                        $(`.card`).removeClass(`open`);
+                    }, 3000)
+                    pass = false;
                 }
 
                 if ($(`.clear`).length === 16) {
