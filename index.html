@@ -103,6 +103,8 @@
             goal.append(img);
             img.src = `./cards/color${arr[i]}.jpg`;
 
+
+
             for (let i = 0; i < 16; i++) {
                 let number = i % 4 + 1
                 $(`.card`).eq(i).find(`.back`).css(`background-image`, `url(./cards/color${number}.jpg)`);
@@ -110,6 +112,7 @@
 
                 let target = Math.floor(Math.random() * 16)
                 $(`.card`).eq(target).insertAfter($(`.card`).eq(i))
+
                 setTimeout(() => {
                     $(`.card`).addClass(`open`);
                 }, 1000)
@@ -142,7 +145,11 @@
                     if (pass === true) {
                         i++;
                         img.src = `./cards/color${arr[i]}.jpg`;
-                        pass = false;
+
+                        $(`.card`).addClass(`open`);
+                        setTimeout(() => {
+                            pass = false;
+                        }, 4000)
                     }
 
                     setTimeout(() => {
