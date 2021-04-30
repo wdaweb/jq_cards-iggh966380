@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <title>Document</title>
     <style>
         #game {
@@ -41,6 +42,10 @@
         .open {
             transform: rotateY(180deg);
         }
+
+        .fadeOut {
+            transform: rotate(90deg);
+        }
     </style>
 </head>
 
@@ -59,6 +64,7 @@
         const back = document.querySelectorAll(`.back`);
         const goal = document.querySelector(`#goal`);
         const img = document.createElement(`img`);
+        const h1 = document.querySelector(`h1`);
         let i = 0;
 
         startBtn.addEventListener(`click`, start);
@@ -107,17 +113,14 @@
             goal.append(img);
             img.src = `./cards/color${arr[i]}.jpg`;
 
-
-
-
             for (let i = 0; i < 16; i++) {
                 let number = i % 4 + 1
                 $(`.card`).eq(i).find(`.back`).css(`background-image`, `url(./cards/color${number}.jpg)`);
                 $(`.card`).eq(i).attr(`data-card`, number);
+                $(`.front`).eq(i).addClass(`animate__animated`)
 
                 let target = rand(16);
                 $(`.card`).eq(target).insertAfter($(`.card`).eq(i))
-                $(`.card`).eq(target).addClass(`animate_animated`)
             }
 
             let cardArr = [];
@@ -128,8 +131,6 @@
                 console.log(cardArr);
             }
 
-            console.log(cardArr[rand(4)]);
-
             setTimeout(() => {
                 $(`.card`).addClass(`open`);
             }, 1000)
@@ -137,10 +138,11 @@
             setTimeout(() => {
                 $(`.card`).removeClass(`open`);
                 startBtn.disabled = true;
-                $(`.card`).eq(cardArr[rand(4)]).addClass(`animate_fadeOutUp`)
             }, 3000)
 
-
+            setTimeout(() => {
+                $(`.front`).eq(cardArr[rand(4)]).addClass(`animate__fadeOutUp`)
+            }, 4000)
 
             let pass = false;
 
