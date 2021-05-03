@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <img src="./cards/Red_back.jpg">
+    </div>
+    <div>
+        <img src="./cards/Red_back.jpg" alt="">
+    </div>
+</body>
+<script>
+    const spinner = document.querySelectorAll('div')
+    let rotateCount = 0;
+    let startTime = null;
+    let rAF;
+
+    function draw(timestamp) {
+        if (!startTime) {
+            startTime = timestamp;
+        }
+
+        rotateCount = (timestamp - startTime) / 5
+        if (rotateCount > 359) {
+            rotateCount %= 360;
+        }
+        console.log(parseFloat(rotateCount));
+
+        // spinner[0].style.transform = `rotate(${rotateCount}deg)`;
+        // spinner[1].style.transform = `rotate(${rotateCount}deg)`;
+
+        rAF = requestAnimationFrame(draw);
+    }
+    console.log(rotateCount);
+    if (parseFloat(rotateCount) === 180) {
+        cancelAnimationFrame(rAF);
+    } else {
+        // draw();
+    }
+
+</script>
+
+</html>

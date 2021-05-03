@@ -46,6 +46,14 @@
         .fadeOut {
             transform: rotate(90deg);
         }
+
+        .rotate {
+            transform: rotate(-180deg);
+        }
+
+        .display {
+            display: none;
+        }
     </style>
 </head>
 
@@ -112,7 +120,7 @@
 
             goal.append(img);
             img.src = `./cards/color${arr[i]}.jpg`;
-
+            let totalArr = [];
             for (let i = 0; i < 16; i++) {
                 let number = i % 4 + 1
                 $(`.card`).eq(i).find(`.back`).css(`background-image`, `url(./cards/color${number}.jpg)`);
@@ -121,15 +129,36 @@
 
                 let target = rand(16);
                 $(`.card`).eq(target).insertAfter($(`.card`).eq(i))
+                totalArr.push(i)
             }
+            console.log('total: ' + totalArr);
 
             let cardArr = [];
             for (let i = 0; i < 16; i++) {
                 if (parseInt($(`.card`).eq(i).attr(`data-card`)) === arr[0]) {
                     cardArr.push(i);
                 }
-                console.log(cardArr);
             }
+            console.log('card: ' + cardArr);
+            let c = 0;
+            let remainArr = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 16; j++) {
+                    if (totalArr[j] === cardArr[i]) {
+                        console.log(totalArr[j] + "=" + cardArr[i])
+                        c = totalArr[j]
+                        totalArr[j] = totalArr[0]
+                        totalArr[0] = c
+                        totalArr.shift();
+                        console.log(totalArr)
+                    }
+                }
+            }
+
+            for (let i = 0; i < totalArr.length; i++) {
+                remainArr.push(totalArr[i])
+            }
+            console.log('remain: ' + remainArr)
 
             setTimeout(() => {
                 $(`.card`).addClass(`open`);
@@ -140,9 +169,18 @@
                 startBtn.disabled = true;
             }, 3000)
 
+            let rand4 = rand(4)
+            let rand12 = rand(12)
             setTimeout(() => {
-                $(`.front`).eq(cardArr[rand(4)]).addClass(`animate__fadeOutUp`)
+                $(`.front`).eq(cardArr[rand4]).addClass(`animate__fadeOutUp`)
+                $(`.front`).eq(remainArr[rand12]).addClass(`animate__fadeOutUp`)
+                $(`.back`).eq(cardArr[rand4]).addClass('display')
+                $(`.back`).eq(remainArr[rand12]).addClass('display')
             }, 4000)
+
+            // setTimeout(() => {
+            //     $(`.front`).eq(cardArr[rand(4)]).addClass(`animate__fadeInDown`)
+            // }, 5000)
 
             let pass = false;
 
