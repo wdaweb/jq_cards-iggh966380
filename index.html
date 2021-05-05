@@ -77,12 +77,13 @@
 
         startBtn.addEventListener(`click`, start);
 
-        function rand(para) {
-            return Math.floor(Math.random() * para)
+        function rand(num) {
+            return Math.floor(Math.random() * num)
         }
 
 
         function start() {
+
             for (let i = 0; i < 16; i++) {
                 $(`#game`).append(`
                 <div class="card">
@@ -121,7 +122,6 @@
 
             goal.append(img);
             img.src = `./cards/color${arr[i]}.jpg`;
-            let totalArr = [];
             for (let i = 0; i < 16; i++) {
                 let number = i % 4 + 1
                 $(`.card`).eq(i).find(`.back`).css(`background-image`, `url(./cards/color${number}.jpg)`);
@@ -130,32 +130,18 @@
 
                 let target = rand(16);
                 $(`.card`).eq(target).insertAfter($(`.card`).eq(i))
-                totalArr.push(i)
-            }
-
-            let cardArr = [];
-            for (let i = 0; i < 16; i++) {
-                if (parseInt($(`.card`).eq(i).attr(`data-card`)) === arr[0]) {
-                    cardArr.push(i);
-                }
             }
 
             let c = 0;
-            let remainArr = [];
+            let cardArr = [[], [], [], []]
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 16; j++) {
-                    if (totalArr[j] === cardArr[i]) {
-                        c = totalArr[j]
-                        totalArr[j] = totalArr[0]
-                        totalArr[0] = c
-                        totalArr.shift();
+                    if (parseInt($(`.card`).eq(j).attr(`data-card`)) === arr[i]) {
+                        cardArr[i].push(j);
                     }
                 }
             }
-
-            for (let i = 0; i < totalArr.length; i++) {
-                remainArr.push(totalArr[i])
-            }
+            console.log(cardArr)
 
             setTimeout(() => {
                 $(`.card`).addClass(`open`);
@@ -170,36 +156,51 @@
             let rand12 = rand(12)
             let d;
             let e;
+            let f;
+            // 第一輪:
+            // remainArr = cardArr[1] or cardArr[2] or cardArr[3]
+            // rand(3) + 1
+            // 第二輪:
+            // remainArr = cardArr[1] or cardArr[2]
+            // rand(2) + 1
+            // 第三輪
+            // remainArr = cardArr[1]
 
-            function changeCard() {
-                $(`.front`).eq(cardArr[rand4]).addClass(`animate__fadeOutUp`)
-                $(`.front`).eq(remainArr[rand12]).addClass(`animate__fadeOutUp`)
-                d = parseInt($(`.card`).eq(cardArr[rand4]).attr(`data-card`))
-                e = parseInt($(`.card`).eq(remainArr[rand12]).attr(`data-card`))
-                $(`.back`).eq(cardArr[rand4]).addClass('display')
-                $(`.back`).eq(remainArr[rand12]).addClass('display')
-                $(`.front`).eq(cardArr[rand4]).removeClass(`animate__fadeOutUp`)
-                $(`.front`).eq(remainArr[rand12]).removeClass(`animate__fadeOutUp`)
-                $(`.card`).eq(cardArr[rand4]).removeAttr('data-card')
-                $(`.card`).eq(cardArr[rand12]).removeAttr('data-card')
-                $(`.card`).eq(cardArr[rand4]).attr('data-card', e)
-                $(`.card`).eq(remainArr[rand12]).attr('data-card', d)
-                $(`.card`).eq(cardArr[rand4]).find(`.back`).css(`background-image`, `url(./cards/color${e}.jpg)`);
-                $(`.card`).eq(remainArr[rand12]).find(`.back`).css(`background-image`, `url(./cards/color${d}.jpg)`);
-            }
+            remainArr = cardArr[rand(3) + 1]
 
-
-
-            setTimeout(changeCard, 4000)
 
             setTimeout(() => {
-                $(`.front`).eq(cardArr[rand4]).addClass(`animate__fadeInDown`)
-                $(`.front`).eq(remainArr[rand12]).addClass(`animate__fadeInDown`)
+                $(`.front`).eq(cardArr[0][rand4]).addClass(`animate__fadeOutUp`)
+                $(`.front`).eq(remainArr[rand4]).addClass(`animate__fadeOutUp`)
+                d = parseInt($(`.card`).eq(cardArr[0][rand4]).attr(`data-card`))
+                e = parseInt($(`.card`).eq(remainArr[rand4]).attr(`data-card`))
+                $(`.back`).eq(cardArr[0][rand4]).addClass('display')
+                $(`.back`).eq(remainArr[rand4]).addClass('display')
+                $(`.front`).eq(cardArr[0][rand4]).removeClass(`animate__fadeOutUp`)
+                $(`.front`).eq(remainArr[rand4]).removeClass(`animate__fadeOutUp`)
+                $(`.card`).eq(cardArr[0][rand4]).removeAttr('data-card')
+                $(`.card`).eq(remainArr[rand4]).removeAttr('data-card')
+                $(`.card`).eq(cardArr[0][rand4]).attr('data-card', e)
+                $(`.card`).eq(remainArr[rand4]).attr('data-card', d)
+                $(`.card`).eq(cardArr[0][rand4]).find(`.back`).css(`background-image`, `url(./cards/color${e}.jpg)`);
+                $(`.card`).eq(remainArr[rand4]).find(`.back`).css(`background-image`, `url(./cards/color${d}.jpg)`);
+            }, 4000)
+
+            setTimeout(() => {
+                $(`.front`).eq(cardArr[0][rand4]).addClass(`animate__fadeInDown`)
+                $(`.front`).eq(remainArr[rand4]).addClass(`animate__fadeInDown`)
             }, 5000)
 
             setTimeout(() => {
-                $(`.back`).eq(cardArr[rand4]).removeClass('display')
-                $(`.back`).eq(remainArr[rand12]).removeClass('display')
+                $(`.back`).eq(cardArr[0][rand4]).removeClass('display')
+                $(`.back`).eq(remainArr[rand4]).removeClass('display')
+                $(`.front`).eq(cardArr[0][rand4]).removeClass(`animate__fadeInDown`)
+                $(`.front`).eq(remainArr[rand4]).removeClass(`animate__fadeInDown`)
+                f = remainArr[rand4];
+                remainArr[rand4] = cardArr[0][rand4]
+                cardArr[0][rand4] = f
+                console.log(cardArr)
+                console.log(remainArr)
             }, 5800)
 
             let pass = false;
@@ -210,19 +211,21 @@
                 }
 
                 if ($(`.open`).length === 4) {
-                    if ($(`.open`).eq(0).attr(`data-card`) === $(`.open`).eq(1).attr(`data-card`)) {
-                        if ($(`.open`).eq(1).attr(`data-card`) === $(`.open`).eq(2).attr(`data-card`)) {
-                            if ($(`.open`).eq(2).attr(`data-card`) === $(`.open`).eq(3).attr(`data-card`)) {
-                                if (parseInt($(`.open`).attr(`data-card`)) === arr[i]) {
-                                    $(`.open`).fadeTo(1000, 0).addClass(`clear`)
-                                    pass = true;
-                                }
+                    for (let i = 0; i < 4; i++) {
+                        if ($(`.open`).eq(i).attr(`data-card`) === $(`.open`).eq(i + 1).attr(`data-card`)) {
+                            if (parseInt($(`.open`).attr(`data-card`)) === arr[i]) {
+                                $(`.open`).fadeTo(1000, 0).addClass(`clear`)
+                                pass = true;
                             }
                         }
                     }
                 }
 
                 if (pass === true) {
+                    cardArr.shift();
+                    console.log(cardArr)
+                    remainArr = cardArr[rand(cardArr.length - 1) + 1]
+                    console.log(remainArr)
                     i++;
                     img.src = `./cards/color${arr[i]}.jpg`;
                     $(`.card`).addClass(`open`);
@@ -230,16 +233,36 @@
                         $(`.card`).removeClass(`open`);
                     }, 3000)
 
-                    setTimeout(changeCard, 4000);
-
                     setTimeout(() => {
-                        $(`.front`).eq(cardArr[rand4]).addClass(`animate__fadeInDown`)
-                        $(`.front`).eq(remainArr[rand12]).addClass(`animate__fadeInDown`)
+                        $(`.front`).eq(cardArr[0][rand4]).addClass(`animate__fadeOutUp`)
+                        $(`.front`).eq(remainArr[rand4]).addClass(`animate__fadeOutUp`)
+                        d = parseInt($(`.card`).eq(cardArr[0][rand4]).attr(`data-card`))
+                        e = parseInt($(`.card`).eq(remainArr[rand4]).attr(`data-card`))
+                        $(`.back`).eq(cardArr[0][rand4]).addClass('display')
+                        $(`.back`).eq(remainArr[rand4]).addClass('display')
+                        $(`.front`).eq(cardArr[0][rand4]).removeClass(`animate__fadeOutUp`)
+                        $(`.front`).eq(remainArr[rand4]).removeClass(`animate__fadeOutUp`)
+                        $(`.card`).eq(cardArr[0][rand4]).removeAttr('data-card')
+                        $(`.card`).eq(remainArr[rand4]).removeAttr('data-card')
+                        $(`.card`).eq(cardArr[0][rand4]).attr('data-card', e)
+                        $(`.card`).eq(remainArr[rand4]).attr('data-card', d)
+                        $(`.card`).eq(cardArr[0][rand4]).find(`.back`).css(`background-image`, `url(./cards/color${e}.jpg)`);
+                        $(`.card`).eq(remainArr[rand4]).find(`.back`).css(`background-image`, `url(./cards/color${d}.jpg)`);
+                    }, 4000)
+                    setTimeout(() => {
+                        $(`.front`).eq(cardArr[0][rand4]).addClass(`animate__fadeInDown`)
+                        $(`.front`).eq(remainArr[rand4]).addClass(`animate__fadeInDown`)
                     }, 5000)
-
                     setTimeout(() => {
-                        $(`.back`).eq(cardArr[rand4]).removeClass('display')
-                        $(`.back`).eq(remainArr[rand12]).removeClass('display')
+                        $(`.back`).eq(cardArr[0][rand4]).removeClass('display')
+                        $(`.back`).eq(remainArr[rand4]).removeClass('display')
+                        $(`.front`).eq(cardArr[0][rand4]).removeClass(`animate__fadeInDown`)
+                        $(`.front`).eq(remainArr[rand4]).removeClass(`animate__fadeInDown`)
+                        f = remainArr[rand4];
+                        remainArr[rand4] = cardArr[0][rand4]
+                        cardArr[0][rand4] = f
+                        console.log(cardArr)
+                        console.log(remainArr)
                     }, 5800)
                     pass = false;
                 }
